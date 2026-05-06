@@ -1,0 +1,16 @@
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "description": "1. Install Node.js from [here](https://nodejs.org/en/download/)\r 2. Install TypeScript globally or locally in your project:\r    - Globally: `npm install -g typescript`\r    - Locally: `npm install --save-dev typescript` // save dev means it will be added to your package.json file under devDependencies , if you dont want to use save dev then you can just use npm install typescript\r 3. now run `npx tsc --init` to create a tsconfig.json file in your project root directory, this file will contain all the configuration options for the TypeScript compiler.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
