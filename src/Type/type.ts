@@ -61,7 +61,7 @@ data = 123;
 data = 'abc';
 data = true; // valid - because we have specified that data can hold any type of value
 // however, we should be careful when using the any type, because it can lead to runtime errors if we try to access properties or call methods on a variable that holds a value of an unexpected type. For example -
-data.toUpperCase(); // this will throw a runtime error if data holds a boolean value, because boolean values do not have the toUpperCase method
+// data.toUpperCase(); // this will throw a runtime error if data holds a boolean value, because boolean values do not have the toUpperCase method
 
 /* 
 Difference samajh:
@@ -132,31 +132,152 @@ servingChai(cutting); // Serving refreshing Cutting Chai!
 //? Yaha par typescipt ek power deta hai , type define krne ka isse hota ye hai ki - hme type narrowing (filtering) and type guards (typeof, instanceof, in operator) ka use krke apne code ko jyada safe and error free bana skte hai
 
 type chaiOrder = {
-  type: string;
+  // here type is a keyword to define a new type
+  type: string; // here it just a value/property of the chaiOrder type, not a keyword
   sugar: number;
 };
 
-const order1: chaiOrder = {
-  type: 'kulhad',
-  sugar: 2,
+function serveChai(obj: unknown): obj is chaiOrder {
+  return (
+    typeof obj === 'object' &&
+    obj != null &&
+    typeof (obj as chaiOrder).type === 'string' &&
+    typeof (obj as chaiOrder).sugar === 'number'
+  );
+}
+
+function processChaiOrder(item: chaiOrder | string) {
+  if (serveChai(item)) {
+    console.log(`Serving ${item.type} with ${item.sugar} spoons of sugar.`);
+  } else {
+    console.log('Invalid chai order!');
+  }
+}
+console.log(processChaiOrder({ type: 'Masala Chai', sugar: 2 })); // Serving Masala Chai with 2 spoons of sugar.
+console.log(processChaiOrder('Just a string')); // Invalid chai order!
+
+// ----------------------------------------------------
+
+// other example for keyword and
+type smallFoodCornersOrder = {
+  type: 'veg'; // here type is a value/property of the smallFoodCornersOrder type, not a keyword
+  item: 'maggie' | 'pasta' | 'sandwich';
+  spiceLevel: 'mild' | 'medium' | 'hot';
 };
 
-const order2: chaiOrder = {
-  type: 'cutting',
-  sugar: 1,
+// one more example
+type dhabaSpecialOrder = {
+  type: 'veg' | 'non-veg'; // here type is a value/property of the dhabaSpecialOrder type, not a keyword
+  spiceLevel: 'mild' | 'medium' | 'hot';
+  itemName: string;
+  quantity: number;
+  tableNumber: number;
+  pricePerItem: number;
 };
 
-function serveChai(order: chaiOrder){
-  if(order.type === 'kulhad' && order.sugar > 0){
-    console.log('Serving hot Kulhad Chai!');
-  }else if(order.type === 'cutting' && order.sugar > 0){
-    console.log('Serving refreshing Cutting Chai!');
-  }else{
-    console.log('Invalid Chai Type!');
+let order1: smallFoodCornersOrder = {
+  type: 'veg',
+  item: 'maggie',
+  spiceLevel: 'medium',
+};
+let order2: dhabaSpecialOrder = {
+  type: 'veg',
+  spiceLevel: 'hot',
+  itemName: 'Sev Tamatar',
+  quantity: 2,
+  tableNumber: 5,
+  pricePerItem: 150,
+};
+
+function processOrder(order: smallFoodCornersOrder | dhabaSpecialOrder) {
+  if (order.type === 'veg' && 'item' in order) {
+    console.log(`Serving ${order.item} with ${order.spiceLevel} spice.`);
+  } else if (order.type === 'veg' || order.type === 'non-veg') {
+    console.log(
+      `Serving ${order.itemName} with ${order.spiceLevel} spice, quantity: ${order.quantity}, table number: ${order.tableNumber}, price per item: ${order.pricePerItem}.`
+    );
+  } else {
+    console.log('Invalid order!');
+  }
+}
+console.log(processOrder(order1)); // Serving maggie with medium spice.
+console.log(processOrder(order2)); // Serving Sev Tamatar with hot spice, quantity: 2, table number: 5, price per item: 150.
+
+// ------------------------------------------------------
+//! Type Assertion
+//? Type assertion ka matlab hai ki hum TypeScript ko explicitly batate hain ki ek variable ka type kya hai, jab TypeScript khud se uska type infer nahi kar pata. Type assertion do tarike se kiya ja sakta hai: angle-bracket syntax (<>) aur as-syntax (as keyword). For example -
+let someValue: unknown = 'Hello, TypeScript!';
+// using angle-bracker syntax
+let someValue1: string = <string>someValue; // here we are asserting that someValue is of type string
+// using as-syntax
+let someValue2: string = somevalue as string; // here we are asserting that someValue is of type string
+
+//* Now i will tell you where Type Assertion fails = 
+//? ye waha par fail ho jata hai jab hum ek type ko dusre type me assert karne ki koshish karte hain, jiska koi relation nahi hota. For example -
+let numValue:number = 45;
+let strValue:string = numValue as string; // here we are trying to assert a number as a string, which is not possible, so it will throw a compile-time error
+
+// ------------------------------------------------------
+//! Never Type [2 types]
+//* when we are working on role based access control , we can use never type to represent a value that should never occur.
+//*  try catch block me bhi use hota hai, jab hme pata hota hai ki koi error kabhi nahi aayega, to hum us case ko never type se represent kar sakte hain.
+
+// for example -
+function handleUserRole(role: 'admin' | 'manager' | 'employee') {
+  switch (role) {
+    case 'admin':
+      console.log('Access granted to admin panel');
+      break;
+    case 'manager':
+      console.log('Access granted to manager dashboard');
+      break;
+    default: {
+      console.log('Access granted to employee portal');
+    }
+  }
+}
+// if we try to call above function with a role that is not defined in the union type ['admin' | 'manager' | 'employee'], then it will throw a compile-time error, because we have not specified that the role can hold any other value.
+// here is entry of never type - if we want to handle the case when an invalid role is passed to the function, we can use the never type to represent that case. For example -
+function handleUserRoleWithNever(role: 'admin' | 'manager' | 'employee') {
+  switch (role) {
+    case 'admin':
+      console.log('Access granted to admin panel');
+      break;
+    case 'manager':
+      console.log('Access granted to manager dashboard');
+      break;
+    case 'employee':
+      console.log('Access granted to employee portal');
+      break;
+    default: {
+      const exhaustiveCheck: never = role;
+      console.log(`Invalid role: ${exhaustiveCheck}`);
+      throw new Error(`Unhandled role: ${exhaustiveCheck}`);
+    }
+  }
+}
+const userRole: 'admin' | 'manager' | 'employee' = 'employee'; // Fixed: assigned a valid role from the union type
+const invalidUserRole: 'admin' | 'manager' | 'employee' = 'guest'; // This will cause a compile-time error because 'guest' is not part of the union type
+handleUserRoleWithNever(userRole);
+handleUserRoleWithNever(invalidUserRole); // This will not compile due to the invalid role assignment
+
+// ------------------------------------------------------
+
+//? try catch block
+function riskyOperation() {
+  try {
+    // Simulating a risky operation that may throw an error
+    const randomNumber = Math.random();
+    if (randomNumber < 0.5) {
+      throw new Error('Random number is less than 0.5, operation failed!');
+    }
+  } catch (error: never) {
+    console.error('An unexpected error occurred:', error);
   }
 }
 
 // ------------------------------------------------------
+
 // Type Aliases
 //* Type aliases allow us to create a new name for a type. This can be useful for making our code more readable and easier to understand. We can create type aliases for primitive types, union types, intersection types, and even for complex object types. [in simple word - type alias ek naya naam create krta h kisi type ke liye, jisse hamara code jyada readable aur samajhne me asaan ho jata h]
 // for example -
