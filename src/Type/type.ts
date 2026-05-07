@@ -63,6 +63,72 @@ data = true; // valid - because we have specified that data can hold any type of
 // however, we should be careful when using the any type, because it can lead to runtime errors if we try to access properties or call methods on a variable that holds a value of an unexpected type. For example -
 data.toUpperCase(); // this will throw a runtime error if data holds a boolean value, because boolean values do not have the toUpperCase method
 
+/* 
+Difference samajh:
+| Feature                    | Inference               | Any                         |
+|----------------------------|-------------------------|-----------------------------|
+| TypeScript check karta hai? | ✅ Haan, strict check   | ❌ Nahi, koi check nahi     |
+| Safe hai?                  | ✅ Safe                 | ❌ Unsafe (JavaScript jaisa)|
+| Use kab karein?            | Hamesha preferred       | Jab no idea what type (rare)|
+*/
+
+// ------------------------------------------------------
+
+//! unknown type
+//? its simple means when u want to use any, so instead of using any
+
+// example -
+let value: unknown; // here we are specifying that the variable value can hold any type of value, but we have to perform a type check before we can access its properties or call its methods
+
+// ------------------------------------------------------
+
+//! Type narrowing
+//? Narrowing ka matlab hai "Type ko filter karna".
+// Jab ek variable multiple types ka ho sakta hai (Union), toh hum conditions laga kar uska exact type confirm karte hain taaki TS error na de.
+
+function processData(input: string | number) {
+  // Narrowing using 'typeof'
+  if (typeof input === 'string') {
+    console.log(input.toUpperCase()); // Ab TS ko pata hai ye string hi hai
+  } else {
+    console.log(input.toFixed(2)); // Ab TS ko pata hai ye number hi hai
+  }
+}
+
+//! Type Guards
+//? Type Guards wo expressions/functions hain jo "Narrowing" karne mein madad karte hain.
+// Common guards: typeof, instanceof, 'in' operator, or custom functions.
+
+class KulhadChai {
+  serve() {
+    console.log('Serving hot Kulhad Chai!');
+  }
+}
+
+class CuttingChai {
+  serve() {
+    console.log('Serving refreshing Cutting Chai!');
+  }
+}
+
+function servingChai(chai: KulhadChai | CuttingChai) {
+  // instanceof is a type guard
+  if (chai instanceof KulhadChai) {
+    // instanceof js ka operator hai, hua kuch nahi hai bs extra best practices ke liye use karte hain, isse simple ye pata chal jayega ki serve karne wala chai kulhad chai hai ya cutting chai, aur uske hisab se serve karenge
+    chai.serve();
+  } else {
+    chai.serve();
+  }
+}
+
+console.log('--- Type Narrowing and Guards Example ---');
+const kulhad = new KulhadChai();
+const cutting = new CuttingChai();
+servingChai(kulhad); // Serving hot Kulhad Chai!
+servingChai(cutting); // Serving refreshing Cutting Chai!
+
+// Summary: Narrowing ek "Goal" hai, aur Type Guard us goal tak pahunchne ka "Rasta" (Tool) hai.
+
 // ------------------------------------------------------
 // Type Aliases
 //* Type aliases allow us to create a new name for a type. This can be useful for making our code more readable and easier to understand. We can create type aliases for primitive types, union types, intersection types, and even for complex object types. [in simple word - type alias ek naya naam create krta h kisi type ke liye, jisse hamara code jyada readable aur samajhne me asaan ho jata h]
