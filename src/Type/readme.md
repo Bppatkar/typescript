@@ -661,7 +661,7 @@ processChaiOrder('invalid json'); // Error handling
 // type: flexible
 type ID = string | number;
 
-type UserType = {
+type BasicUserType = {
   name: string;
   age: number;
 };
@@ -671,6 +671,110 @@ interface UserInterface {
   name: string;
   age: number;
 }
+```
+
+### Aapka Important Point (Interview Style Explanation)
+
+`type` aur `interface` dono se hum user/object ka shape define kar sakte hain.
+
+- `interface` mein hum same naam ko multiple baar likh sakte hain (declaration merging), aur `extends` se doosre interface ko inherit kar sakte hain.
+- `type` mein hum primitives, union, intersection, tuples, mapped types, wagaira define kar sakte hain, lekin same naam ka `type` dubara define nahi kar sakte.
+
+```typescript
+// ============================
+// INTERFACE EXAMPLE
+// ============================
+
+interface UserInterface {
+  name: string;
+  age: number;
+  email: string;
+  isWorking: boolean;
+  salary: number;
+  address: {
+    street: string;
+    city: string;
+    country: string;
+  };
+}
+
+interface Flipkart {
+  id: number;
+  name: string;
+  price: number;
+  discount: number;
+}
+
+// Same interface name ko merge kiya ja sakta hai
+interface Flipkart {
+  category: 'electronics' | 'fashion' | 'home' | 'beauty';
+}
+
+// Interface inheritance using extends
+interface Meesho extends Flipkart {
+  returnPolicy: string;
+}
+
+const product1: Meesho = {
+  id: 1,
+  name: 'Smartphone',
+  price: 9999,
+  discount: 10,
+  category: 'electronics',
+  returnPolicy: '30 days return policy',
+};
+
+// ============================
+// TYPE EXAMPLE
+// ============================
+
+type UserBase = {
+  // primitive fields
+  name: string;
+  age: number;
+
+  // union type
+  email: string | null;
+
+  // nested object (complex object type)
+  address: {
+    street: string;
+    city: string;
+    country: string;
+  };
+};
+
+type JobInfo = {
+  isWorking: boolean;
+  company: string;
+  position: 'manager' | 'developer' | 'designer';
+};
+
+// intersection type
+type UserType = UserBase & JobInfo;
+
+const user2: UserType = {
+  name: 'Aman',
+  age: 25,
+  email: 'aman@example.com',
+  address: {
+    street: 'MG Road',
+    city: 'Pune',
+    country: 'India',
+  },
+  isWorking: true,
+  company: 'ABC Tech',
+  position: 'developer',
+};
+
+// type same name se dubara define nahi hota
+// type Amazon = {
+//   id: number;
+// };
+// type Amazon = {
+//   // ❌ Duplicate identifier 'Amazon'
+//   category: string;
+// };
 ```
 
 ### Real World Example (Team Rules Metaphor)

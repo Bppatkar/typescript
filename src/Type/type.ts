@@ -210,12 +210,12 @@ let someValue: unknown = 'Hello, TypeScript!';
 // using angle-bracker syntax
 let someValue1: string = <string>someValue; // here we are asserting that someValue is of type string
 // using as-syntax
-let someValue2: string = somevalue as string; // here we are asserting that someValue is of type string
+let someValue2: string = someValue as string; // here we are asserting that someValue is of type string
 
-//* Now i will tell you where Type Assertion fails = 
+//* Now i will tell you where Type Assertion fails =
 //? ye waha par fail ho jata hai jab hum ek type ko dusre type me assert karne ki koshish karte hain, jiska koi relation nahi hota. For example -
-let numValue:number = 45;
-let strValue:string = numValue as string; // here we are trying to assert a number as a string, which is not possible, so it will throw a compile-time error
+let numValue: number = 45;
+// let strValue: string = numValue as string; // here we are trying to assert a number as a string, which is not possible, so it will throw a compile-time error
 
 // ------------------------------------------------------
 //! Never Type [2 types]
@@ -257,38 +257,106 @@ function handleUserRoleWithNever(role: 'admin' | 'manager' | 'employee') {
   }
 }
 const userRole: 'admin' | 'manager' | 'employee' = 'employee'; // Fixed: assigned a valid role from the union type
-const invalidUserRole: 'admin' | 'manager' | 'employee' = 'guest'; // This will cause a compile-time error because 'guest' is not part of the union type
+// const invalidUserRole: 'admin' | 'manager' | 'employee' = 'guest'; // This will cause a compile-time error because 'guest' is not part of the union type
 handleUserRoleWithNever(userRole);
-handleUserRoleWithNever(invalidUserRole); // This will not compile due to the invalid role assignment
+// handleUserRoleWithNever(invalidUserRole); // This will not compile due to the invalid role assignment
+
+// ------------------------------------------------------
+
+//! Types and Interfaces
+//? in dono se user , type define kr sakta hai, but interface me hum kai sare object type define kr sakte hai wo bhi same name se or interface extends krke ham doosre interface ko inherit kr sakte hain, jabki type me hum primitive types, union types, intersection types, and even complex object types define kr sakte hai and ek name se ek hi bar define kr sakte hain. For example -
+
+// intersection means - jaha do ya do se jyada types ko combine karke ek naya type banate hain, jisme un sabhi types ke properties hote hain. For example -
+
+type A = { a: number };
+type B = { b: string };
+type C = A & B; // C will have properties of both A and B, so C will be { a: number; b: string }
+
+interface UserInterface {
+  name: string;
+  age: number;
+  email: string;
+  isWorking: boolean;
+  salary: number;
+  address: {
+    street: string;
+    city: string;
+    country: string;
+  };
+}
+
+type UserType = {
+  // primitives
+  name: string;
+  age: number;
+
+  // union type
+  email: string | null;
+
+  // intersection type
+  isWorking: boolean & { company: string };
+  position: 'manager' | 'developer' | ('designer' & { department: string });
+
+  // complex object type [or nested object type]
+  address: {
+    street: string;
+    city: string;
+    country: string;
+  };
+};
+
+interface flipkart {
+  id: number;
+  name: string;
+  price: number;
+  discount: number;
+}
+
+interface flipkart {
+  category: 'electronics' | 'fashion' | 'home' | 'beauty';
+}
+// we can extends one interface to another interface
+interface meesho extends flipkart {
+  returnPolicy: string;
+}
+const product1: meesho = {
+  id: 1,
+  name: 'Smartphone',
+  price: 9999,
+  discount: 10,
+  category: 'electronics',
+  returnPolicy: '30 days return policy',
+};
+
+//? see no error when both name are same in interface now type
+
+// type amazon = {
+//   id: number;
+//   name: string;
+//   price: number;
+//   discount: number;
+// };
+// type amazon = {
+//   // Duplicate identifier 'amazon'
+//   category: 'electronics' | 'fashion' | 'home' | 'beauty';
+// };
 
 // ------------------------------------------------------
 
 //? try catch block
-function riskyOperation() {
+function riskyOperation(): never {
   try {
-    // Simulating a risky operation that may throw an error
-    const randomNumber = Math.random();
-    if (randomNumber < 0.5) {
-      throw new Error('Random number is less than 0.5, operation failed!');
+    while (true) {
+      // Simulating a risky operation that may throw an error
+      const randomNumber = Math.random();
+      if (randomNumber < 0.5) {
+        throw new Error('Random number is less than 0.5, operation failed!');
+      }
+      console.log("Still running...");
     }
-  } catch (error: never) {
-    console.error('An unexpected error occurred:', error);
+  } catch (error: unknown) {
+    throw new Error(`Operation failed: ${error}`);
   }
 }
-
-// ------------------------------------------------------
-
-// Type Aliases
-//* Type aliases allow us to create a new name for a type. This can be useful for making our code more readable and easier to understand. We can create type aliases for primitive types, union types, intersection types, and even for complex object types. [in simple word - type alias ek naya naam create krta h kisi type ke liye, jisse hamara code jyada readable aur samajhne me asaan ho jata h]
-// for example -
-type User = {
-  name: string;
-  age: number;
-  email: string;
-};
-
-const user1: User = {
-  name: 'Alice',
-  age: 25,
-  email: 'alice@example.com',
-};
+// const data1 = riskyOperation(); // This will run indefinitely until it throws an error, at which point it will be caught and re-thrown with a new error message. The return type of this function is never because it either runs indefinitely or throws an error, and never returns a value.
+// console.log(data1); // This line will never be reached due to the nature of the riskyOperation function.
