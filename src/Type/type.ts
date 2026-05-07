@@ -127,7 +127,34 @@ const cutting = new CuttingChai();
 servingChai(kulhad); // Serving hot Kulhad Chai!
 servingChai(cutting); // Serving refreshing Cutting Chai!
 
-// Summary: Narrowing ek "Goal" hai, aur Type Guard us goal tak pahunchne ka "Rasta" (Tool) hai.
+//* Summary: Narrowing ek "Goal" hai, aur Type Guard us goal tak pahunchne ka "Rasta" (Tool) hai.
+
+//? Yaha par typescipt ek power deta hai , type define krne ka isse hota ye hai ki - hme type narrowing (filtering) and type guards (typeof, instanceof, in operator) ka use krke apne code ko jyada safe and error free bana skte hai
+
+type chaiOrder = {
+  type: string;
+  sugar: number;
+};
+
+const order1: chaiOrder = {
+  type: 'kulhad',
+  sugar: 2,
+};
+
+const order2: chaiOrder = {
+  type: 'cutting',
+  sugar: 1,
+};
+
+function serveChai(order: chaiOrder){
+  if(order.type === 'kulhad' && order.sugar > 0){
+    console.log('Serving hot Kulhad Chai!');
+  }else if(order.type === 'cutting' && order.sugar > 0){
+    console.log('Serving refreshing Cutting Chai!');
+  }else{
+    console.log('Invalid Chai Type!');
+  }
+}
 
 // ------------------------------------------------------
 // Type Aliases
