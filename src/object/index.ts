@@ -68,3 +68,19 @@ const candidate1: userHiring = {
 };
 
 //* Type aliases simple word main bole to type ka new name hai, is se hum complex types ko easily refer kar sakte hain, aur code ko zyada readable bana sakte hain.
+
+//! Creating class
+
+class Animal {
+  name: string;
+  age: number;
+  species: string;
+  constructor(name: string, age: number, species: string) {
+    this.name = name;
+    this.age = age;
+    this.species = species;
+  }
+}
+
+const dog = new Animal('Buddy', 3, 'Dog');
+console.log(dog); // Output: Animal { name: 'Buddy', age: 3, species: 'Dog' }

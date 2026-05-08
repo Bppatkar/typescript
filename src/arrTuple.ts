@@ -66,11 +66,16 @@ const colorName: string = Color[1];
 console.log(colorName); // Output: Green
 
 enum Direction {
-  Up = 'UP',
-  Down = 'DOWN',
-  Left = 'LEFT',
-  Right = 'RIGHT',
+  Up,
+  Down,
+  Left,
+  Right,
 }
 
-const direction:Direction = Direction.Left;
+const direction: Direction = Direction.Left;
 console.log(direction); // Output: LEFT
+
+console.log(Direction.Up); // Output: 0 [0 because enum starts with 0 by default]
+console.log(Direction.Down); // Output: 1 [1 because enum start with 0 and here we have 1 more value after 0]
+console.log(Direction.Left); // Output: 2
+console.log(Direction.Right); // Output: 3
